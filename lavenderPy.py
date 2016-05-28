@@ -38,7 +38,7 @@ def _replaceHis(text):
         This function replaces `his' with either `hir' or `hirs', depending
         on the part-of-speech. This is done heuristically to avoid dependencies,
         but a pos-tagger would improve the accuracy. For now, the vast majority 
-        would is handled correclty like this.
+        is handled correclty like this.
     """
     tokens = text.split(" ")
     # Iterate over tokens while looking ahead one token.
