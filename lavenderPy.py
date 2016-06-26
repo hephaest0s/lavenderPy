@@ -1,9 +1,10 @@
 from __future__ import print_function
 
+
 # Lists with words that frequently follow possesive pronouns. 
 _conjunctions = set(["after", "although", "and", "as", "because", "before", "but", "by", "even", "in", "lest", "once", "only", "or", "provided", "since", "so", "than", "that", "though", "till", "unless", "until", "when", "whenever", "where", "wherever", "while"])
 _prepositions = set([ "aboard", "about", "above","across", "after", "against", "along", "amid", "among", "anti", "around", "as", "at", "before", "behind", "below", "beneath", "beside", "besides", "between", "beyond", "but", "by", "concerning", "considering", "despite", "down", "during", "except", "excepting", "excluding", "following", "for", "from", "in", "inside", "into", "like", "minus", "near", "of", "off", "on", "onto", "opposite", "outside", "over", "past", "per", "plus", "regarding", "round", "save", "since", "than", "through", "to", "toward", "towards", "under", "underneath", "unlike", "until", "up", "upon", "versus", "via", "with", "within", "without" ])
-_punc = list(".,?!:;)")
+_punc = [".", "..", "...", "....", ",", "?", "!", ":", ";", "(", ")" , "'", '"', "\"", "`"]
 
 _mapping = [
         (" she ", " ze "),
@@ -28,6 +29,8 @@ for k, v in _mapping:
 	for p in _punc:
 	    _mappingSimple.append((k, v))
 	    _mappingSimple.append((k[:-1] + p, v[:-1] + p))
+	    for pp in _punc:
+	        _mappingSimple.append(( pp + k[1:-1] + p, pp + v[1:-1] + p))
 
 _followsHirs = set(list(_conjunctions) + list(_prepositions) + _punc)
 _hisPunc = set(["his" + p for p in _punc] + ["His" + p for p in _punc])
@@ -38,7 +41,7 @@ def _replaceHis(text):
         This function replaces `his' with either `hir' or `hirs', depending
         on the part-of-speech. This is done heuristically to avoid dependencies,
         but a pos-tagger would improve the accuracy. For now, the vast majority 
-        is handled correclty like this.
+        would is handled correclty like this.
     """
     tokens = text.split(" ")
     # Iterate over tokens while looking ahead one token.
@@ -61,7 +64,8 @@ def _replaceHis(text):
         hirs = "hirs" if tokens[last][0] == "h" else "Hirs"
         tokens[last] = hirs
     return " ".join(tokens)
-          
+
+
 def lavenderize(text):
     """
         Takes an english text string and makes all pronouns gender neutral.
@@ -71,8 +75,9 @@ def lavenderize(text):
         text = text.replace(k,v)
     return _replaceHis(text)[1:-1]
 
+
 if __name__=="__main__":
-    example = "S/he was a big woman who enjoyed going out with him. He, however, was deeply in love with her." 
+    example = "S/he was a big woman who enjoyed going out with him. He, however, was deeply in love with her. (she) .himself. " 
     print("Original:")
     print(example)
     print("Lavendized:")
